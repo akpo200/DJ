@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#FFFFFF; --surface:#F8F8F8; --surface2:#F0F0F0; --surface3:#E8E8E8;
-  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.13);
-  --text:#0D0E12; --muted:#6B6B78; --muted2:#9999A8;
+  --bg:#0A0D14; --surface:#111520; --surface2:#181D2E; --surface3:#1E2438;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#E8EAF2; --muted:#6B7099; --muted2:#4A5070;
   --accent:#4F7FFF; --accent-glow:rgba(79,127,255,0.15);
   --danger:#EF4444; --danger-bg:rgba(239,68,68,0.10);
   --s-new:#4F7FFF;    --s-new-bg:rgba(79,127,255,0.12);
@@ -17,9 +17,24 @@
   --s-discuss:#A855F7;--s-discuss-bg:rgba(168,85,247,0.12);
   --s-client:#10B981; --s-client-bg:rgba(16,185,129,0.12);
   --s-pass:#EF4444;   --s-pass-bg:rgba(239,68,68,0.10);
-  --logistique:#4F7FFF; --banque:#10B981; --hotel:#F0B429;
+  --logistique:#4F7FFF; --banque:#10B981; --hotel:#D4920A;
   --sante:#EF4444; --immo:#A855F7; --commerce:#F97316;
   --telecom:#06B6D4; --conseil:#EC4899;
+}
+body.light {
+  --bg:#F5F5F7; --surface:#FFFFFF; --surface2:#F0F0F2; --surface3:#E8E8EC;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.13);
+  --text:#0D0E12; --muted:#6B6B78; --muted2:#9999A8;
+  --accent:#3366EE; --accent-glow:rgba(51,102,238,0.12);
+  --danger:#DC2626; --danger-bg:rgba(220,38,38,0.08);
+  --s-new:#3366EE;    --s-new-bg:rgba(51,102,238,0.10);
+  --s-contact:#C8860A;--s-contact-bg:rgba(200,134,10,0.10);
+  --s-discuss:#8B35D6;--s-discuss-bg:rgba(139,53,214,0.10);
+  --s-client:#059669; --s-client-bg:rgba(5,150,105,0.10);
+  --s-pass:#DC2626;   --s-pass-bg:rgba(220,38,38,0.08);
+  --logistique:#3366EE; --banque:#059669; --hotel:#C8860A;
+  --sante:#DC2626; --immo:#8B35D6; --commerce:#D4580A;
+  --telecom:#0891B2; --conseil:#C2185B;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);font-size:14px;min-height:100vh;}
@@ -144,6 +159,7 @@ tbody tr:hover td{border-color:var(--border2);}
     <button class="btn btn-add" onclick="openModal()">+ Ajouter un prospect</button>
     <button class="btn btn-export" onclick="exportCSV()">↓ CSV</button>
     <button class="btn btn-export" onclick="resetData()" style="color:#EF4444;border-color:rgba(239,68,68,0.3);" title="Remettre les données par défaut">↺ Reset</button>
+    <button class="btn btn-export" id="theme-btn" onclick="toggleTheme()" title="Changer le thème" style="font-size:16px;padding:6px 12px;">🌙</button>
   </div>
 </div>
 
@@ -493,8 +509,23 @@ function resetData(){
   save(); renderTable();
 }
 
+// THEME
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  localStorage.setItem('crm_theme', isLight ? 'light' : 'dark');
+}
+function initTheme(){
+  const saved = localStorage.getItem('crm_theme');
+  if(saved === 'light'){
+    document.body.classList.add('light');
+    document.getElementById('theme-btn').textContent = '☀️';
+  }
+}
+
 // INIT
 if(!load()){ D.forEach(d=>prospects.push(mk(...d))); save(); }
+initTheme();
 renderTable();
 </script>
 </body>

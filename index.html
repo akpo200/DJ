@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Prospects Djibouti</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0A0D14; --surface:#111520; --surface2:#181D2E; --surface3:#1E2438;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#E8EAF2; --muted:#6B7099; --muted2:#4A5070;
+  --accent:#4F7FFF; --accent-glow:rgba(79,127,255,0.15);
+  --danger:#EF4444; --danger-bg:rgba(239,68,68,0.10);
+  --s-new:#4F7FFF;    --s-new-bg:rgba(79,127,255,0.12);
+  --s-contact:#F0B429;--s-contact-bg:rgba(240,180,41,0.12);
+  --s-discuss:#A855F7;--s-discuss-bg:rgba(168,85,247,0.12);
+  --s-client:#10B981; --s-client-bg:rgba(16,185,129,0.12);
+  --s-pass:#EF4444;   --s-pass-bg:rgba(239,68,68,0.10);
+  --logistique:#4F7FFF; --banque:#10B981; --hotel:#F0B429;
+  --sante:#EF4444; --immo:#A855F7; --commerce:#F97316;
+  --telecom:#06B6D4; --conseil:#EC4899;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);font-size:14px;min-height:100vh;}
+
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.05em;}
+.logo span{color:var(--muted);}
+.topbar-title{font-size:13px;color:var(--muted);}
+.topbar-right{display:flex;gap:8px;}
+.btn{border:none;border-radius:8px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s;}
+.btn-add{background:var(--accent);color:#fff;}
+.btn-add:hover{opacity:.85;}
+.btn-export{background:var(--surface3);color:var(--text);border:1px solid var(--border2);}
+.btn-export:hover{background:var(--surface2);}
+
+.statsbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:22px;flex-wrap:wrap;}
+.stat-item{display:flex;align-items:center;gap:7px;}
+.stat-dot{width:7px;height:7px;border-radius:50%;}
+.stat-label{font-size:12px;color:var(--muted);}
+.stat-count{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;}
+
+.filters{padding:14px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface);}
+.search{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;width:190px;outline:none;transition:border-color .15s;}
+.search:focus{border-color:var(--accent);}
+.search::placeholder{color:var(--muted2);}
+.filter-sep{width:1px;height:20px;background:var(--border2);margin:0 2px;}
+.pill{border:1px solid var(--border2);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.pill:hover{border-color:var(--accent);color:var(--text);}
+.pill.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent);}
+.pill.sector-logistique.active{background:rgba(79,127,255,.12);border-color:var(--logistique);color:var(--logistique);}
+.pill.sector-banque.active{background:rgba(16,185,129,.12);border-color:var(--banque);color:var(--banque);}
+.pill.sector-hotel.active{background:rgba(240,180,41,.12);border-color:var(--hotel);color:var(--hotel);}
+.pill.sector-sante.active{background:rgba(239,68,68,.10);border-color:var(--sante);color:var(--sante);}
+.pill.sector-immo.active{background:rgba(168,85,247,.12);border-color:var(--immo);color:var(--immo);}
+.pill.sector-commerce.active{background:rgba(249,115,22,.12);border-color:var(--commerce);color:var(--commerce);}
+.pill.sector-telecom.active{background:rgba(6,182,212,.12);border-color:var(--telecom);color:var(--telecom);}
+.pill.sector-conseil.active{background:rgba(236,72,153,.12);border-color:var(--conseil);color:var(--conseil);}
+
+.results-count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);padding:8px 24px;border-bottom:1px solid var(--border);background:var(--surface);}
+.table-wrap{overflow-x:auto;padding:14px 24px 80px;}
+table{width:100%;border-collapse:separate;border-spacing:0 4px;min-width:920px;}
+thead th{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
+tbody tr{background:var(--surface);transition:background .12s;}
+tbody tr:hover{background:var(--surface2);}
+tbody tr.hidden{display:none;}
+td{padding:12px 12px;vertical-align:middle;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+td:first-child{border-left:1px solid var(--border);border-radius:8px 0 0 8px;width:30px;}
+td:last-child{border-right:1px solid var(--border);border-radius:0 8px 8px 0;width:36px;text-align:center;}
+tbody tr:hover td{border-color:var(--border2);}
+
+.row-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted2);}
+.company-name{font-weight:500;font-size:14px;}
+.company-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.sector-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.sector-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.status-badge{display:inline-block;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:filter .12s;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;}
+.status-badge:hover{filter:brightness(1.25);}
+.prio-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;}
+.prio-A{background:rgba(16,185,129,.15);color:#10B981;}
+.prio-B{background:rgba(240,180,41,.12);color:#F0B429;}
+.prio-C{background:rgba(107,112,153,.15);color:var(--muted);}
+.service-tags{display:flex;gap:3px;flex-wrap:wrap;}
+.service-tag{font-size:11px;padding:2px 6px;border-radius:4px;background:var(--surface3);color:var(--muted);white-space:nowrap;}
+.note-cell{font-size:12px;color:var(--muted);max-width:155px;cursor:text;min-width:80px;}
+.note-input{background:var(--surface3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:4px 8px;width:140px;outline:none;}
+.note-input:focus{border-color:var(--accent);}
+.btn-del{background:transparent;border:none;cursor:pointer;color:var(--muted2);font-size:14px;padding:5px;border-radius:6px;transition:all .15s;line-height:1;display:inline-flex;align-items:center;justify-content:center;}
+.btn-del:hover{background:var(--danger-bg);color:var(--danger);}
+
+.empty-state{text-align:center;padding:60px 24px;color:var(--muted);font-size:14px;display:none;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;width:540px;max-width:96vw;max-height:92vh;overflow-y:auto;}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:10;}
+.modal-title{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;}
+.modal-close{background:transparent;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:2px 6px;border-radius:6px;transition:color .15s;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:20px 24px;}
+.modal-footer{padding:14px 24px 20px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.form-row.full{grid-template-columns:1fr;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:500;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;}
+.field input,.field select,.field textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:9px 12px;outline:none;transition:border-color .15s;width:100%;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{resize:vertical;min-height:68px;}
+.field select option{background:#181D2E;}
+.field input::placeholder{color:var(--muted2);}
+.form-error{color:var(--danger);font-size:12px;margin-top:8px;display:none;}
+.btn-cancel{background:transparent;border:1px solid var(--border2);color:var(--muted);border-radius:8px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
+.btn-cancel:hover{color:var(--text);}
+.btn-submit{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s;}
+.btn-submit:hover{opacity:.85;}
+
+/* CONFIRM */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:600;display:none;align-items:center;justify-content:center;}
+.confirm-overlay.open{display:flex;}
+.confirm-box{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:26px 28px;width:350px;max-width:95vw;}
+.confirm-title{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;margin-bottom:10px;}
+.confirm-msg{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:22px;}
+.confirm-name{color:var(--text);font-weight:600;}
+.confirm-btns{display:flex;gap:10px;justify-content:flex-end;}
+.btn-confirm-del{background:var(--danger);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s;}
+.btn-confirm-del:hover{opacity:.85;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="logo">NANCY<span>.agency</span></span>
+    <span class="topbar-title">/ CRM Djibouti</span>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-add" onclick="openModal()">+ Ajouter un prospect</button>
+    <button class="btn btn-export" onclick="exportCSV()">↓ CSV</button>
+  </div>
+</div>
+
+<div class="statsbar">
+  <div class="stat-item"><span class="stat-count" id="cnt-all">50</span><span class="stat-label">prospects</span></div>
+  <div style="width:1px;height:14px;background:var(--border2)"></div>
+  <div class="stat-item"><span class="stat-dot" style="background:var(--s-new)"></span><span class="stat-count" id="cnt-new" style="color:var(--s-new)">0</span><span class="stat-label">à contacter</span></div>
+  <div class="stat-item"><span class="stat-dot" style="background:var(--s-contact)"></span><span class="stat-count" id="cnt-contact" style="color:var(--s-contact)">0</span><span class="stat-label">contacté</span></div>
+  <div class="stat-item"><span class="stat-dot" style="background:var(--s-discuss)"></span><span class="stat-count" id="cnt-discuss" style="color:var(--s-discuss)">0</span><span class="stat-label">en discussion</span></div>
+  <div class="stat-item"><span class="stat-dot" style="background:var(--s-client)"></span><span class="stat-count" id="cnt-client" style="color:var(--s-client)">0</span><span class="stat-label">client</span></div>
+  <div class="stat-item"><span class="stat-dot" style="background:var(--s-pass)"></span><span class="stat-count" id="cnt-pass" style="color:var(--s-pass)">0</span><span class="stat-label">pas intéressé</span></div>
+</div>
+
+<div class="filters">
+  <input class="search" type="text" id="search" placeholder="Rechercher..." oninput="applyFilters()">
+  <div class="filter-sep"></div>
+  <button class="pill active" data-fs="all" onclick="setSector(this)">Tous</button>
+  <button class="pill sector-logistique" data-fs="logistique" onclick="setSector(this)">🚢 Logistique</button>
+  <button class="pill sector-banque" data-fs="banque" onclick="setSector(this)">🏦 Banque</button>
+  <button class="pill sector-hotel" data-fs="hotel" onclick="setSector(this)">🏨 Hôtel</button>
+  <button class="pill sector-sante" data-fs="sante" onclick="setSector(this)">🏥 Santé</button>
+  <button class="pill sector-immo" data-fs="immo" onclick="setSector(this)">🏗️ Immo</button>
+  <button class="pill sector-commerce" data-fs="commerce" onclick="setSector(this)">📦 Commerce</button>
+  <button class="pill sector-telecom" data-fs="telecom" onclick="setSector(this)">📡 Télécom</button>
+  <button class="pill sector-conseil" data-fs="conseil" onclick="setSector(this)">💼 Conseil</button>
+  <div class="filter-sep"></div>
+  <button class="pill" data-fst="all" onclick="setStatusF(this)">Tous statuts</button>
+  <button class="pill" data-fst="À contacter" onclick="setStatusF(this)" style="color:var(--s-new)">À contacter</button>
+  <button class="pill" data-fst="Contacté" onclick="setStatusF(this)" style="color:var(--s-contact)">Contacté</button>
+  <button class="pill" data-fst="En discussion" onclick="setStatusF(this)" style="color:var(--s-discuss)">En discussion</button>
+  <button class="pill" data-fst="Client ✓" onclick="setStatusF(this)" style="color:var(--s-client)">Client</button>
+  <button class="pill" data-fst="Pas intéressé" onclick="setStatusF(this)" style="color:var(--s-pass)">Pas intéressé</button>
+</div>
+
+<div class="results-count" id="results-count">Chargement…</div>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr>
+      <th>#</th><th>Entreprise</th><th>Secteur</th><th>Services</th>
+      <th>Prio</th><th>Statut</th><th>Canal</th><th>Notes</th><th></th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="empty-state" id="empty-state">Aucun prospect trouvé.</div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">+ NOUVEAU PROSPECT</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row full"><div class="field">
+        <label>Nom de l'entreprise *</label>
+        <input type="text" id="f-nom" placeholder="Ex: Société Import Djibouti">
+      </div></div>
+      <div class="form-row full"><div class="field">
+        <label>Description courte</label>
+        <input type="text" id="f-sub" placeholder="Ex: Import alimentaire, distribution B2B">
+      </div></div>
+      <div class="form-row">
+        <div class="field"><label>Secteur *</label>
+          <select id="f-sector">
+            <option value="logistique">🚢 Logistique</option>
+            <option value="banque">🏦 Banque / Finance</option>
+            <option value="hotel">🏨 Hôtel / Tourisme</option>
+            <option value="sante">🏥 Santé</option>
+            <option value="immo">🏗️ Immobilier</option>
+            <option value="commerce">📦 Commerce</option>
+            <option value="telecom">📡 Télécom / Tech</option>
+            <option value="conseil">💼 Conseil / Formation</option>
+          </select>
+        </div>
+        <div class="field"><label>Priorité *</label>
+          <select id="f-prio">
+            <option value="A">A — Haute priorité</option>
+            <option value="B" selected>B — Moyenne priorité</option>
+            <option value="C">C — Basse priorité</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full"><div class="field">
+        <label>Services proposés</label>
+        <input type="text" id="f-services" placeholder="Site vitrine, LinkedIn, Automatisation (séparés par virgules)">
+      </div></div>
+      <div class="form-row full"><div class="field">
+        <label>Canal de contact</label>
+        <input type="text" id="f-canal" placeholder="LinkedIn + Email">
+      </div></div>
+      <div class="form-row full"><div class="field">
+        <label>Notes</label>
+        <textarea id="f-note" placeholder="Infos utiles sur ce prospect…"></textarea>
+      </div></div>
+      <p class="form-error" id="form-error">Veuillez renseigner au minimum le nom de l'entreprise.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-submit" onclick="submitProspect()">Ajouter le prospect</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title">Supprimer ce prospect ?</div>
+    <div class="confirm-msg">Vous allez supprimer <span class="confirm-name" id="confirm-name"></span>. Cette action est irréversible.</div>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Annuler</button>
+      <button class="btn-confirm-del" onclick="confirmDelete()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STATUSES=['À contacter','Contacté','En discussion','Client ✓','Pas intéressé'];
+const SS={
+  'À contacter':  {bg:'var(--s-new-bg)',    c:'var(--s-new)',    l:'→ À contacter'},
+  'Contacté':     {bg:'var(--s-contact-bg)',c:'var(--s-contact)',l:'✉ Contacté'},
+  'En discussion':{bg:'var(--s-discuss-bg)',c:'var(--s-discuss)',l:'💬 En discussion'},
+  'Client ✓':     {bg:'var(--s-client-bg)', c:'var(--s-client)', l:'✓ Client'},
+  'Pas intéressé':{bg:'var(--s-pass-bg)',   c:'var(--s-pass)',   l:'✕ Pas intéressé'},
+};
+const SC={logistique:'var(--logistique)',banque:'var(--banque)',hotel:'var(--hotel)',sante:'var(--sante)',immo:'var(--immo)',commerce:'var(--commerce)',telecom:'var(--telecom)',conseil:'var(--conseil)'};
+const SL={logistique:'Logistique',banque:'Banque/Finance',hotel:'Hôtel/Tourisme',sante:'Santé',immo:'Immobilier',commerce:'Commerce',telecom:'Télécom/Tech',conseil:'Conseil/Formation'};
+
+let uid=1;
+let prospects=[];
+function mk(nom,sub,sector,prio,svc,canal,note=''){
+  return{id:uid++,nom,sub,sector,prio,
+    services:Array.isArray(svc)?svc:svc.split(',').map(s=>s.trim()).filter(Boolean),
+    canal,status:'À contacter',note};
+}
+
+const D=[
+  ['Bolloré Africa Logistics Djibouti','Manutention portuaire, transit','logistique','A',['Automatisation','LinkedIn B2B','Dashboard BI'],'LinkedIn + Email'],
+  ['DP World Djibouti','Terminal à conteneurs Doraleh','logistique','A',['Dashboard BI','Automatisation devis','Formation IA'],'LinkedIn'],
+  ['Gulf Agency Company (GAC)','Agent maritime, ship agency','logistique','A',['Site vitrine','LinkedIn','Automatisation'],'LinkedIn + Site web'],
+  ['CMA CGM Djibouti','Compagnie maritime, bureau local','logistique','A',['LinkedIn B2B','Automatisation'],'LinkedIn'],
+  ['Maersk Line — Bureau Djibouti','Shipping international','logistique','A',['Dashboard BI','Automatisation'],'LinkedIn'],
+  ['SDAD (Acconage & Dépotage)','Opérateur portuaire local','logistique','B',['Site vitrine','Automatisation devis'],'Email + LinkedIn'],
+  ['Ethiopian Shipping Lines DJ','Bureau de représentation locale','logistique','B',['LinkedIn','Automatisation'],'LinkedIn'],
+  ['Horizon Logistics Djibouti','Fret aérien & maritime','logistique','B',['Site vitrine','LinkedIn','Automatisation'],'LinkedIn + Google Maps'],
+  ['DHL Djibouti','Express international, logistique','logistique','B',['Automatisation','Dashboard BI'],'LinkedIn'],
+  ['DPFZA (Free Zones Authority)','Zone franche, institution publique','logistique','C',['Formation IA','Site institutional'],'Email officiel'],
+  ['BCI (Banque Commerce & Industrie)','Banque commerciale historique DJ','banque','A',['Dashboard BI','Formation IA','Marketing digital'],'LinkedIn + Email DG'],
+  ['Salaam African Bank','Banque islamique, en pleine croissance','banque','A',['Dashboard BI','Automatisation','Formation IA'],'LinkedIn'],
+  ['Dahabshiil Bank International','Transferts + banque, réseau somalien','banque','A',['Dashboard BI','LinkedIn','Automatisation'],'LinkedIn'],
+  ['BCIMR','Banque de crédit et investissement','banque','B',['Dashboard BI','Marketing','Formation IA'],'LinkedIn + Email'],
+  ['CAC International Bank','Banque éthiopienne — bureau DJ','banque','B',['Dashboard BI','Automatisation'],'LinkedIn'],
+  ['Exim Bank Djibouti','Banque commerce extérieur','banque','B',['Dashboard BI','Automatisation rapports'],'LinkedIn'],
+  ['Chabi Money Transfer','Fintech transferts d\'argent','banque','B',['Site vitrine','Marketing digital','Automatisation'],'LinkedIn + Email'],
+  ['Groupe COFIDJI','Microfinance, crédit PME','banque','C',['Site web','Automatisation CRM'],'Email direct'],
+  ['Kempinski Palace Djibouti','5 étoiles, clientèle internationale','hotel','B',['Social media','Contenu IA','LinkedIn'],'LinkedIn Marketing Manager'],
+  ['Djibouti Palace Kempinski','Resort, conferences, spa','hotel','B',['Booking automation','Social media'],'LinkedIn'],
+  ['Hôtel de la Siesta','Hôtel indépendant, centre-ville','hotel','A',['Site + Booking','Instagram','Contenu IA'],'Email + WhatsApp'],
+  ['Hôtel Horseed','Hôtel local, clientèle africaine','hotel','A',['Site vitrine','Réseaux sociaux'],'Email + Google Maps'],
+  ['Best Western Plus Djibouti','Chaîne internationale, gestion locale','hotel','B',['Social media','Automatisation résa'],'LinkedIn'],
+  ['Djibouti Discover','Agence tourisme (lac Assal, plongée)','hotel','A',['Site vitrine','SEO','Instagram'],'Email + Instagram DM'],
+  ['Tadjourah Beach Resort','Éco-lodge, tourisme nature','hotel','A',['Site + Booking','Instagram','Contenu IA'],'Email + WhatsApp'],
+  ['Clinique Bouffard','Principal établissement privé DJ','sante','A',['Site + RDV en ligne','Rappels auto','SEO local'],'Email direction médicale'],
+  ['Polyclinique Internationale DJ','Clinique moderne, expats & locaux','sante','A',['Site vitrine','Automatisation rappels','Google Ads'],'Email + LinkedIn'],
+  ['Centre Médical Al-Hayat','Médecine générale & spécialités','sante','B',['Site web','Prise RDV en ligne'],'Email + WhatsApp'],
+  ['Cabinet Médical Dr. Houmed','Médecin libéral, audience locale','sante','B',['Google My Business','Site one-page','WhatsApp auto'],'WhatsApp + Email'],
+  ['Pharmacie Centrale de Djibouti','Pharmacie de référence locale','sante','C',['Site catalogue','Commandes en ligne'],'Email + LinkedIn'],
+  ['Al Aqar Real Estate','Promoteur résidentiel & commercial','immo','A',['LinkedIn B2B','Landing page','Lead gen'],'LinkedIn + Email'],
+  ['Groupe SABA Construction','BTP, grands projets infrastructure','immo','A',['LinkedIn','Dashboard projets','Site vitrine'],'LinkedIn'],
+  ['Horizon Properties Djibouti','Agence immobilière, vente & location','immo','A',['Site + annonces','Lead gen','WhatsApp auto'],'Email + WhatsApp + LinkedIn'],
+  ['CMD (Constructions Modernes DJ)','Construction résidentielle locale','immo','B',['Site vitrine','LinkedIn','Devis auto'],'Email + LinkedIn'],
+  ['Agence Immobilière du Golfe','Location expats, bases militaires','immo','B',['Site bilingue','LinkedIn','CRM auto'],'LinkedIn + Email'],
+  ['PADCO Djibouti','Promoteur zones économiques spéciales','immo','B',['Site investisseurs','LinkedIn','Dashboard'],'LinkedIn'],
+  ['Groupe Boreh International','Négoce, port, immobilier — holding DJ','commerce','B',['LinkedIn corporate','Dashboard BI'],'LinkedIn'],
+  ['MANA Trading Company','Import alimentaire, distribution B2B','commerce','A',['Catalogue B2B en ligne','Commandes auto','WhatsApp Business'],'Email + WhatsApp'],
+  ['Ali Mohamed Jumale & Co','Import général, réseau ancré','commerce','A',['Site catalogue','Automatisation commandes'],'Email direct'],
+  ['CDCI (Distribution Commerce DJ)','Distribution alimentation & froids','commerce','B',['Catalogue B2B','Dashboard stock'],'Email + LinkedIn'],
+  ['Gulf Import & Export','Négoce matériaux & électronique','commerce','B',['Site vitrine','LinkedIn B2B'],'LinkedIn'],
+  ['Djibouti Trade Solutions','Intermédiaire commercial DJ/Éthiopie','commerce','B',['LinkedIn','Automatisation CRM'],'LinkedIn'],
+  ['Société Générale de Commerce DJ','Distribution générale, ancré localement','commerce','C',['Site web','WhatsApp Business'],'Email + WhatsApp'],
+  ['Djibouti Telecom','Opérateur national, monopole historique','telecom','C',['Formation IA (corporate)','Dashboard BI'],'LinkedIn Direction'],
+  ['Djibouti Datacenter (CDC)','Centre de données, câbles sous-marins','telecom','B',['LinkedIn B2B','Site technique','Formation IA'],'LinkedIn + Email'],
+  ['Internet Invest Djibouti','FAI privé, services cloud locaux','telecom','B',['Site vitrine','LinkedIn','Marketing B2B'],'LinkedIn + Email'],
+  ['Cabinet INCOM','Principal cabinet comm & conseil DJ','conseil','A',['Automatisation agence','CRM clients auto','Reporting auto','Formation IA marque blanche'],'LinkedIn DG + Email'],
+  ['IFPB (Institut Formation Banque)','Formation professionnelle secteur bancaire','conseil','B',['Formation IA','Curriculum digital','LMS automatisé'],'Email direction + LinkedIn'],
+  ['Cabinet Conseil & Stratégie DJ','Consulting PME locales','conseil','B',['Site vitrine','LinkedIn','Automatisation'],'LinkedIn'],
+  ['CCIABF (Chambre de Commerce)','Institution — accès réseau PME DJ','conseil','A',['Partenariat répertoire','Formation IA','Événements'],'Email officiel + LinkedIn'],
+];
+D.forEach(d=>prospects.push(mk(...d)));
+
+function renderRow(p,n){
+  const c=SC[p.sector],sl=SL[p.sector],s=SS[p.status];
+  const svc=p.services.map(x=>`<span class="service-tag">${x}</span>`).join('');
+  const note=p.note||'<span style="color:var(--muted2);font-style:italic">Double-clic…</span>';
+  const tr=document.createElement('tr');
+  tr.dataset.id=p.id; tr.dataset.sector=p.sector;
+  tr.dataset.status=p.status; tr.dataset.name=p.nom.toLowerCase();
+  tr.innerHTML=`
+    <td><span class="row-num">${String(n).padStart(2,'0')}</span></td>
+    <td><div class="company-name">${p.nom}</div><div class="company-sub">${p.sub}</div></td>
+    <td><span class="sector-badge" style="background:${c}18;color:${c};"><span class="sector-dot" style="background:${c}"></span>${sl}</span></td>
+    <td><div class="service-tags">${svc}</div></td>
+    <td><span class="prio-badge prio-${p.prio}">${p.prio}</span></td>
+    <td id="sc-${p.id}"><span class="status-badge" style="background:${s.bg};color:${s.c};" onclick="cycleStatus(event,${p.id})">${s.l}</span></td>
+    <td><span style="font-size:12px;color:var(--muted)">${p.canal}</span></td>
+    <td class="note-cell" id="nc-${p.id}" ondblclick="editNote(${p.id})">${p.note?p.note:note}</td>
+    <td><button class="btn-del" onclick="askDelete(event,${p.id})" title="Supprimer">✕</button></td>`;
+  return tr;
+}
+
+function renderTable(){
+  const tb=document.getElementById('tbody');
+  tb.innerHTML='';
+  prospects.forEach((p,i)=>tb.appendChild(renderRow(p,i+1)));
+  applyFilters(); updateStats();
+}
+
+function cycleStatus(e,id){
+  e.stopPropagation();
+  const p=prospects.find(x=>x.id===id); if(!p)return;
+  p.status=STATUSES[(STATUSES.indexOf(p.status)+1)%STATUSES.length];
+  const s=SS[p.status];
+  document.getElementById('sc-'+id).innerHTML=`<span class="status-badge" style="background:${s.bg};color:${s.c};" onclick="cycleStatus(event,${id})">${s.l}</span>`;
+  const tr=document.querySelector(`tr[data-id="${id}"]`); if(tr)tr.dataset.status=p.status;
+  applyFilters(); updateStats();
+}
+
+function editNote(id){
+  const p=prospects.find(x=>x.id===id); if(!p)return;
+  const cell=document.getElementById('nc-'+id);
+  cell.innerHTML=`<input class="note-input" value="${(p.note||'').replace(/"/g,'&quot;')}" id="ni-${id}" onblur="saveNote(${id})" onkeydown="if(event.key==='Enter')saveNote(${id})">`;
+  document.getElementById('ni-'+id).focus();
+}
+function saveNote(id){
+  const input=document.getElementById('ni-'+id); if(!input)return;
+  const p=prospects.find(x=>x.id===id); if(p)p.note=input.value;
+  const cell=document.getElementById('nc-'+id);
+  cell.innerHTML=p.note?p.note:'<span style="color:var(--muted2);font-style:italic">Double-clic…</span>';
+}
+
+let pendingId=null;
+function askDelete(e,id){
+  e.stopPropagation(); pendingId=id;
+  const p=prospects.find(x=>x.id===id);
+  document.getElementById('confirm-name').textContent=p?p.nom:'ce prospect';
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open');pendingId=null;}
+function confirmDelete(){
+  if(pendingId===null)return;
+  prospects=prospects.filter(x=>x.id!==pendingId);
+  closeConfirm(); renderTable();
+}
+
+function openModal(){
+  ['f-nom','f-sub','f-services','f-canal','f-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-sector').value='logistique';
+  document.getElementById('f-prio').value='B';
+  document.getElementById('form-error').style.display='none';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('f-nom').focus(),80);
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+function submitProspect(){
+  const nom=document.getElementById('f-nom').value.trim();
+  if(!nom){document.getElementById('form-error').style.display='block';return;}
+  document.getElementById('form-error').style.display='none';
+  prospects.push(mk(
+    nom,
+    document.getElementById('f-sub').value.trim(),
+    document.getElementById('f-sector').value,
+    document.getElementById('f-prio').value,
+    document.getElementById('f-services').value,
+    document.getElementById('f-canal').value.trim()||'LinkedIn',
+    document.getElementById('f-note').value.trim()
+  ));
+  closeModal(); renderTable();
+  setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),80);
+}
+
+let activeSec='all', activeStF='all';
+function setSector(btn){
+  document.querySelectorAll('[data-fs]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); activeSec=btn.dataset.fs; applyFilters();
+}
+function setStatusF(btn){
+  document.querySelectorAll('[data-fst]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); activeStF=btn.dataset.fst; applyFilters();
+}
+function applyFilters(){
+  const q=document.getElementById('search').value.toLowerCase();
+  let v=0;
+  document.querySelectorAll('#tbody tr').forEach(tr=>{
+    const show=(activeSec==='all'||tr.dataset.sector===activeSec)
+      &&(activeStF==='all'||tr.dataset.status===activeStF)
+      &&(!q||tr.dataset.name.includes(q));
+    tr.classList.toggle('hidden',!show); if(show)v++;
+  });
+  const t=prospects.length;
+  document.getElementById('results-count').textContent=v===t?`${t} prospect${t>1?'s':''}`:`${v} sur ${t} prospects`;
+  document.getElementById('empty-state').style.display=v===0?'block':'none';
+}
+function updateStats(){
+  const c={'À contacter':0,'Contacté':0,'En discussion':0,'Client ✓':0,'Pas intéressé':0};
+  prospects.forEach(p=>{if(c[p.status]!==undefined)c[p.status]++;});
+  document.getElementById('cnt-all').textContent=prospects.length;
+  document.getElementById('cnt-new').textContent=c['À contacter'];
+  document.getElementById('cnt-contact').textContent=c['Contacté'];
+  document.getElementById('cnt-discuss').textContent=c['En discussion'];
+  document.getElementById('cnt-client').textContent=c['Client ✓'];
+  document.getElementById('cnt-pass').textContent=c['Pas intéressé'];
+}
+function exportCSV(){
+  const h=['#','Entreprise','Description','Secteur','Priorité','Statut','Canal','Services','Notes'];
+  const r=prospects.map((p,i)=>[i+1,`"${p.nom}"`,`"${p.sub}"`,SL[p.sector],p.prio,p.status,`"${p.canal}"`,`"${p.services.join(', ')}"`,`"${p.note||''}"`]);
+  const csv=[h,...r].map(x=>x.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='prospects_djibouti.csv'; a.click();
+}
+
+renderTable();
+</script>
+</body>
+</html>

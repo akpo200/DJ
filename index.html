@@ -143,6 +143,7 @@ tbody tr:hover td{border-color:var(--border2);}
   <div class="topbar-right">
     <button class="btn btn-add" onclick="openModal()">+ Ajouter un prospect</button>
     <button class="btn btn-export" onclick="exportCSV()">↓ CSV</button>
+    <button class="btn btn-export" onclick="resetData()" style="color:#EF4444;border-color:rgba(239,68,68,0.3);" title="Remettre les données par défaut">↺ Reset</button>
   </div>
 </div>
 
@@ -280,6 +281,23 @@ function mk(nom,sub,sector,prio,svc,canal,note=''){
     canal,status:'À contacter',note};
 }
 
+const LS_KEY='crm_djibouti_v1';
+function save(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify({uid, prospects})); } catch(e){}
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(raw){
+      const d=JSON.parse(raw);
+      uid=d.uid||1;
+      prospects=d.prospects||[];
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
 const D=[
   ['Bolloré Africa Logistics Djibouti','Manutention portuaire, transit','logistique','A',['Automatisation','LinkedIn B2B','Dashboard BI'],'LinkedIn + Email'],
   ['DP World Djibouti','Terminal à conteneurs Doraleh','logistique','A',['Dashboard BI','Automatisation devis','Formation IA'],'LinkedIn'],
@@ -368,7 +386,7 @@ function cycleStatus(e,id){
   const s=SS[p.status];
   document.getElementById('sc-'+id).innerHTML=`<span class="status-badge" style="background:${s.bg};color:${s.c};" onclick="cycleStatus(event,${id})">${s.l}</span>`;
   const tr=document.querySelector(`tr[data-id="${id}"]`); if(tr)tr.dataset.status=p.status;
-  applyFilters(); updateStats();
+  save(); applyFilters(); updateStats();
 }
 
 function editNote(id){
@@ -382,6 +400,7 @@ function saveNote(id){
   const p=prospects.find(x=>x.id===id); if(p)p.note=input.value;
   const cell=document.getElementById('nc-'+id);
   cell.innerHTML=p.note?p.note:'<span style="color:var(--muted2);font-style:italic">Double-clic…</span>';
+  save();
 }
 
 let pendingId=null;
@@ -395,7 +414,7 @@ function closeConfirm(){document.getElementById('confirm-overlay').classList.rem
 function confirmDelete(){
   if(pendingId===null)return;
   prospects=prospects.filter(x=>x.id!==pendingId);
-  closeConfirm(); renderTable();
+  closeConfirm(); save(); renderTable();
 }
 
 function openModal(){
@@ -421,7 +440,7 @@ function submitProspect(){
     document.getElementById('f-canal').value.trim()||'LinkedIn',
     document.getElementById('f-note').value.trim()
   ));
-  closeModal(); renderTable();
+  closeModal(); save(); renderTable();
   setTimeout(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}),80);
 }
 
@@ -466,6 +485,16 @@ function exportCSV(){
   a.download='prospects_djibouti.csv'; a.click();
 }
 
+function resetData(){
+  if(!confirm('Réinitialiser avec les 50 prospects par défaut ? Toutes vos modifications seront perdues.'))return;
+  localStorage.removeItem(LS_KEY);
+  uid=1; prospects=[];
+  D.forEach(d=>prospects.push(mk(...d)));
+  save(); renderTable();
+}
+
+// INIT
+if(!load()){ D.forEach(d=>prospects.push(mk(...d))); save(); }
 renderTable();
 </script>
 </body>
